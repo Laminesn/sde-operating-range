@@ -1,0 +1,45 @@
+{
+ "seed": 0,
+ "R": 0.05,
+ "augmentation": false,
+ "their_table7": {
+  "5": 0.9277,
+  "10": 0.9921,
+  "20": 1.0,
+  "40": 1.0
+ },
+ "their_table5_test": 0.9163,
+ "wall_seconds": 1511.8,
+ "rows": [
+  {
+   "epoch": 5,
+   "train_acc": 0.7757894736842105,
+   "eval_acc": 0.7384,
+   "test_acc": 0.7404
+  },
+  {
+   "epoch": 10,
+   "train_acc": 0.8790315789473684,
+   "eval_acc": 0.772,
+   "test_acc": 0.7847
+  },
+  {
+   "epoch": 20,
+   "train_acc": 0.9644631578947368,
+   "eval_acc": 0.8092,
+   "test_acc": 0.8086
+  },
+  {
+   "epoch": 40,
+   "train_acc": 1.0,
+   "eval_acc": 0.8724,
+   "test_acc": 0.8729
+  },
+  {
+   "epoch": 50,
+   "train_acc": 1.0,
+   "eval_acc": 0.87,
+   "test_acc": 0.8715
+  }
+ ]
+}
