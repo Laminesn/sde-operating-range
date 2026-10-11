@@ -20,7 +20,7 @@ variant recovered from the activation dimensionalities in their Table 6.
 | `protocol.py` | the Sec. 4.1 evaluation protocol and the activation bank |
 | `arch.py` | All-CNN-C and ResNet-18, with all six tap dimensionalities asserted against their Table 6 |
 | `pipeline.py` | data, forget/retain splits, the training recipe |
-| `unlearn.py` | Gradient Ascent, NegGrad+, Fine-Tuning and SCRUB, reimplemented from their Sec. 4.2 |
+| `unlearn.py` | five approximate unlearning methods: Gradient Ascent, NegGrad+, Fine-Tuning and SCRUB from RULER's Sec. 4.2, plus Random-label, which is one of the four Zhang et al. actually validate SDE against |
 | `analyse.py` | aggregation for the replication tables |
 | `results/` | every result JSON behind the paper's tables and figure |
 
@@ -39,11 +39,15 @@ python3 run_table1_saved.py                 # re-scores saved models, ~1 min eac
 # Figure 1, both panels, from the stored results (no training needed, seconds)
 python3 make_figure_range.py
 
-# ResNet-18 operating range, from saved epoch snapshots (~4 min)
+# ResNet-18 operating range. The snapshots come from run_c100.py --save-ckpt,
+# so generate them first (~70 min), then evaluate (~4 min).
+python3 run_c100.py --dataset cifar10 --seed 0 --save-ckpt
 python3 run_r18_range.py --dataset cifar10 --seed 0
 
-# SDE on actually unlearned models: 5 models x 4 methods (~2 h)
-python3 run_unlearned_sde.py --R 05
+# SDE on models that actually memorised the forget set, then unlearned it.
+# Trains theta_o on D_r + D_f, unlearns with five methods, evaluates over
+# several draws, and reports the out-of-training rate alongside accuracy (~4 h).
+python3 run_unlearn_proper.py --R 05
 
 # Evaluation draw vs training seed: 5 models x 5 draws (~10 min)
 python3 run_evalnoise.py --R 05
@@ -51,6 +55,15 @@ python3 run_evalnoise.py --R 05
 # Does dropping augmentation reproduce their trajectory? (~25 min)
 python3 run_noaug.py --seed 0
 ```
+
+## Install
+
+```bash
+pip install -r requirements.txt
+```
+
+The results here were produced on an Apple M2 Max with the MPS backend and no
+CUDA. `torch==2.4.1` has no MPS autocast, so there is no mixed-precision path.
 
 ## What is not here
 

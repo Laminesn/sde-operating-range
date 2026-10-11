@@ -53,7 +53,16 @@ import pipeline
 ETA_U = 5e-4          # Sec. 4.2, "held fixed across all datasets"
 ALPHA = 0.6           # Sec. 4.2
 TEMPERATURE = 2.0     # Sec. 4.2
-EPOCHS = dict(GradientAscent=5, NegGradPlus=10, FineTuning=10, SCRUB=10)
+EPOCHS = dict(GradientAscent=5, NegGradPlus=10, FineTuning=10, SCRUB=10,
+              RandLabel=10)
+
+# RandLabel is NOT from RULER. It is Random-label (Fan et al., 2024), one of the
+# four methods Zhang et al. (ICLR 2026) actually evaluate SDE against in their
+# Sec. 4.3, added so that at least one method in our comparison comes from the
+# suite the metric was validated on. Their text does not give its
+# hyperparameters, so it reuses the RULER optimiser settings above (Adam,
+# eta_u = 5e-4) and the 10-epoch budget of the other retain-touching methods;
+# that choice is ours and is recorded here rather than implied.
 
 
 def _loader(ds, idx, bs, seed):
@@ -105,13 +114,34 @@ def unlearn(method, theta_o, tr_aug, D_r, D_f, dataset, arch_name, seed=0,
             p.requires_grad_(False)
 
     dl_f = _loader(tr_aug, D_f, bs, seed)
-    dl_r = _loader(tr_aug, D_r, bs, seed) if method != "GradientAscent" else None
+    dl_r = _loader(tr_aug, D_r, bs, seed) if method != "GradientAscent" else None  # RandLabel uses both
 
     for ep in range(n_ep):
         if method == "GradientAscent":
             for x, y in dl_f:
                 x, y = x.to(pipeline.DEV), y.to(pipeline.DEV)
                 loss = -F.cross_entropy(model(x), y)      # ASCEND on D_f
+                loss.backward()
+                opt.step()
+                opt.zero_grad(set_to_none=True)
+
+        elif method == "RandLabel":
+            # descend on D_f with labels resampled to a WRONG class, and on D_r
+            # with true labels, so the forget set is actively relabelled rather
+            # than merely ascended on.
+            g = torch.Generator().manual_seed(40_000 + seed + 97 * ep)
+            for x, y in dl_f:
+                x, y = x.to(pipeline.DEV), y.to(pipeline.DEV)
+                n_cls = int(model(x[:1]).shape[1])
+                shift = torch.randint(1, n_cls, y.shape, generator=g).to(y.device)
+                y_rand = (y + shift) % n_cls          # never the true label
+                loss = F.cross_entropy(model(x), y_rand)
+                loss.backward()
+                opt.step()
+                opt.zero_grad(set_to_none=True)
+            for x, y in dl_r:
+                x, y = x.to(pipeline.DEV), y.to(pipeline.DEV)
+                loss = F.cross_entropy(model(x), y)
                 loss.backward()
                 opt.step()
                 opt.zero_grad(set_to_none=True)
