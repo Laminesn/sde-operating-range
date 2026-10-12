@@ -93,18 +93,23 @@ def sample_subsets(pool, n, m, rng):
 
 
 def evaluate(bank, D_r, D_f, n_test, n, m=25, sigma_mode="sqrtdim",
-             T=hsic.T_PERM, seed=0):
+             T=hsic.T_PERM, seed=0, n_ref=None):
     """Full Sec. 4.1 protocol for one model at one (n, tap, sigma) setting.
 
     bank   : ActBank for the model/tap being evaluated
     n_test : len(test set), for drawing S_OOT
+    n_ref  : reference-set size. Their Sec. 4.3 says references are "of the same
+             size" as the target and their Sec. 4.1 says nothing, so the default
+             (None) matches |S| as everywhere else in this paper. Setting it
+             decouples the two, which is what the |S|-trend confound needs.
     Returns dict with f1, accuracy, otr, margins, and the Sec. 3.1 test.
     """
     rng = np.random.default_rng(5000 + seed)
+    n_ref = n if n_ref is None else n_ref
 
     # references first, so targets can be drawn disjoint from S_IT
-    ref_it = rng.choice(D_r, size=n, replace=False)
-    ref_oot = rng.choice(n_test, size=n, replace=False)
+    ref_it = rng.choice(D_r, size=n_ref, replace=False)
+    ref_oot = rng.choice(n_test, size=n_ref, replace=False)
     pool_r = np.setdiff1d(D_r, ref_it)
 
     # circularity guards (unstated detail #1)
