@@ -127,7 +127,8 @@ def main():
             del mdl
         del theta_o, theta_r
 
-        out = os.path.join(HERE, f"results_unlearn_proper_R{args.R}.json")
+        tag_m = "" if args.m == 25 else f"-m{args.m}"
+        out = os.path.join(HERE, f"results_unlearn_proper_R{args.R}{tag_m}.json")
         json.dump(dict(dataset="cifar10", arch="allcnn", R=args.R, n=args.n,
                        m=args.m, draws=args.draws, seeds=args.seeds,
                        methods=args.methods, theta_o_trained_on="D_r + D_f",
@@ -152,7 +153,7 @@ def main():
         print(f"{label:<17}{f('retain_acc'):>8.3f}{f('forget_acc'):>8.3f}"
               f"{st.mean(acc):>10.3f}{f('otr_Df'):>9.3f}"
               f"{sum(bool(r.get('sec31_detected')) for r in s_)/len(s_):>7.0%}")
-    print(f"\nwrote results_unlearn_proper_R{args.R}.json  "
+    print(f"\nwrote {os.path.basename(out)}  "
           f"({(time.time()-t0)/60:.1f} min)")
 
 

@@ -22,7 +22,8 @@ variant recovered from the activation dimensionalities in their Table 6.
 | `pipeline.py` | data, forget/retain splits, the training recipe |
 | `unlearn.py` | five approximate unlearning methods: Gradient Ascent, NegGrad+, Fine-Tuning and SCRUB from RULER's Sec. 4.2, plus Random-label, which is one of the four Zhang et al. actually validate SDE against |
 | `analyse.py` | aggregation for the replication tables |
-| `results/` | every result JSON behind the paper's tables and figure |
+| `results/` | every result JSON behind the paper's tables and figures |
+| `run_optional_chain.sh` | the follow-up runs: m=100 to match Zhang's Sec. 4.3, two more ResNet-18 seeds, and the other forgetting ratios |
 
 ## Reproducing each result
 
@@ -36,8 +37,10 @@ python3 run_table1_saved.py                 # re-scores saved models, ~1 min eac
 
 # Figure 1a and the operating-range bands: 525 checkpoints, from the same run above.
 
-# Figure 1, both panels, from the stored results (no training needed, seconds)
-python3 make_figure_range.py
+# Figure 1 (single panel with the inset used in the paper), and the
+# generalisation-gap figure in the appendix. No training needed, seconds.
+python3 make_figure_range.py --single
+python3 make_figure_gap.py
 
 # ResNet-18 operating range. The snapshots come from run_c100.py --save-ckpt,
 # so generate them first (~70 min), then evaluate (~4 min).
