@@ -24,6 +24,7 @@ variant recovered from the activation dimensionalities in their Table 6.
 | `analyse.py` | aggregation for the replication tables |
 | `results/` | every result JSON behind the paper's tables and figures |
 | `run_optional_chain.sh` | the follow-up runs: m=100 to match Zhang's Sec. 4.3, two more ResNet-18 seeds, and the other forgetting ratios |
+| `run_unlearned_sde.py` | **withdrawn.** It applied unlearning to retrain oracles, which never saw `D_f`, so there was nothing to unlearn. Superseded by `run_unlearn_proper.py`. Kept, with `results/results_unlearned_sde_R05.json`, only so the retraction in the paper can be checked. |
 
 ## Reproducing each result
 
@@ -83,7 +84,8 @@ CIFAR-10 downloads on first use.
   every checkpoint. `pipeline.py` does this; the paper's appendix explains why.
   Any mid-training evaluation loop on a shared global RNG has this bug.
 - A single SDE evaluation at `m=25` is noisy: the same weights give accuracies
-  spanning 0.24 to 0.94 across reference and target draws. Average over draws.
+  spanning 0.24 to 0.94 across all 25 (model, draw) cells of the fixed-weights
+  re-draw; the widest single model spans 0.24 to 0.84. Average over draws.
 
 ## Citation
 

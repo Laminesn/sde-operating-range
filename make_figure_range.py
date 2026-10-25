@@ -34,15 +34,21 @@ for f in sorted(glob.glob(os.path.join(HERE, "results",
     rs = [r for r in d["records"] if r.get("role") == "sweep"]
     runs[(d["R"], d["seed"])] = sorted(rs, key=lambda r: r["train_acc"])
 
+r18_runs = []
+for _s in (0, 1, 2):
+    _p = os.path.join(HERE, f"results_r18_range_cifar10-s{_s}.json")
+    if os.path.exists(_p):
+        r18_runs.append(sorted(json.load(open(_p))["records"], key=lambda r: r["train_acc"]))
 r18 = None
-p18 = os.path.join(HERE, "results_r18_range_cifar10-s0.json")
-if os.path.exists(p18):
-    r18 = sorted(json.load(open(p18))["records"], key=lambda r: r["train_acc"])
+if r18_runs:                      # mean across seeds at each checkpoint index
+    r18 = [dict(train_acc=np.mean([run[i]["train_acc"] for run in r18_runs]),
+                accuracy=np.mean([run[i]["accuracy"] for run in r18_runs]))
+           for i in range(len(r18_runs[0]))]
 
 import sys
 SINGLE = "--single" in sys.argv
 if SINGLE:
-    fig, ax = plt.subplots(1, 1, figsize=(6.6, 2.5)); ax2 = None
+    fig, ax = plt.subplots(1, 1, figsize=(5.5, 2.45)); ax2 = None
 else:
     fig, (ax, ax2) = plt.subplots(1, 2, figsize=(9.2, 3.3))
 
@@ -64,19 +70,19 @@ ax.plot(xs, ys, color="#1f4e79", lw=2.2, marker="o", ms=4,
 if r18:
     ax.plot([r["train_acc"] for r in r18], [r["accuracy"] for r in r18],
             color="#c0392b", lw=2.0, marker="s", ms=4,
-            label="ResNet-18, 1 run", zorder=4)
+            label=f"ResNet-18, {len(r18_runs)} runs", zorder=4)
 
 ax.axhline(0.5, color="k", ls=":", lw=1.0, zorder=2)
-ax.text(0.408, 0.455, "chance", fontsize=7, color="k")
+ax.text(0.408, 0.455, "chance", fontsize=7.5, color="k")
 ax.axvline(0.9277, color="#2e7d32", ls="--", lw=1.1, zorder=2)
-ax.text(0.9255, 0.055, "their earliest\nreported checkpoint", fontsize=6.5,
+ax.text(0.9255, 0.055, "their earliest\nreported checkpoint", fontsize=7,
         color="#2e7d32", ha="right")
 
 ax.set_xlabel("train accuracy")
 ax.set_ylabel("SDE accuracy")
 ax.set_xlim(0.40, 1.005)
 ax.set_ylim(0.0, 1.05)
-ax.legend(fontsize=7, loc="lower left", framealpha=0.9, borderpad=0.4)
+ax.legend(fontsize=7.5, loc="lower left", framealpha=0.9, borderpad=0.4)
 ax.set_title("" if SINGLE else "a. against memorisation of $D_r$", fontsize=9, loc="left")
 
 if ax2 is None:
@@ -93,8 +99,8 @@ if ax2 is None:
     axi.axhline(0.5, color="k", ls=":", lw=0.9)
     axi.set_xlim(0.985, 1.0008); axi.set_ylim(0.3, 1.05)
     axi.set_xticks([0.99, 1.0]); axi.set_yticks([0.5, 1.0])
-    axi.tick_params(labelsize=6)
-    axi.set_title("the working regime", fontsize=6.5, pad=1.5)
+    axi.tick_params(labelsize=7)
+    axi.set_title("the working regime", fontsize=7, pad=1.5)
     for sp in axi.spines.values():
         sp.set_linewidth(0.6)
     for ext in ("pdf", "png"):
