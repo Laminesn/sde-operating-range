@@ -12,7 +12,7 @@ rows = [r for f in sorted(glob.glob(os.path.join(HERE, "results", "cifar10-allcn
         for r in json.load(open(f))["records"] if r.get("role") == "sweep"]
 gap = np.array([r["train_acc"] - r["test_acc"] for r in rows]); acc = np.array([r["accuracy"] for r in rows])
 ta  = np.array([r["train_acc"] for r in rows])
-fig, ax = plt.subplots(figsize=(5.0, 2.4))
+fig, ax = plt.subplots(figsize=(5.5, 2.4))
 ax.scatter(gap, acc, s=7, color="0.55", alpha=0.6, edgecolors="none")
 ge = np.quantile(gap, np.linspace(0, 1, 9)); gx, gy = [], []
 for lo, hi in zip(ge[:-1], ge[1:]):

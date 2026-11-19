@@ -73,7 +73,8 @@ if r18:
             label=f"ResNet-18, {len(r18_runs)} runs", zorder=4)
 
 ax.axhline(0.5, color="k", ls=":", lw=1.0, zorder=2)
-ax.text(0.408, 0.455, "chance", fontsize=7.5, color="k")
+ax.text(0.408, 0.455, "chance", fontsize=7.5, color="k", zorder=5,
+        bbox=dict(facecolor="white", edgecolor="none", pad=0.6, alpha=0.9))
 ax.axvline(0.9277, color="#2e7d32", ls="--", lw=1.1, zorder=2)
 ax.text(0.9255, 0.055, "their earliest\nreported checkpoint", fontsize=7,
         color="#2e7d32", ha="right")
