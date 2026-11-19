@@ -1,8 +1,8 @@
 # When Does Unlearning Verification Work?
 
-Code and results for *When Does Unlearning Verification Work? Measuring the
-Operating Range of a Split-Half Dependence Metric on CIFAR-10*, NeurIPS 2026
-workshop on Privacy in the Era of Large Opaque Models (PriLOM), poster.
+Code and results for *When Does Unlearning Verification Work? An Operating-Range
+Analysis of a Subset-Independence Metric*, NeurIPS 2026 workshop on Privacy in
+the Era of Large Opaque Models (PriLOM), poster.
 
 This is an **independent reimplementation** of the Split-half Dependence
 Evaluation (SDE) of Zhang et al., ICLR 2026, built from the published text
@@ -91,8 +91,8 @@ CIFAR-10 downloads on first use.
 
 ```
 @inproceedings{deen2026operatingrange,
-  title     = {When Does Unlearning Verification Work? Measuring the Operating
-               Range of a Split-Half Dependence Metric on CIFAR-10},
+  title     = {When Does Unlearning Verification Work? An Operating-Range
+               Analysis of a Subset-Independence Metric},
   author    = {Deen, Lamine},
   booktitle = {NeurIPS 2026 Workshop on Privacy in the Era of Large Opaque Models},
   year      = {2026}

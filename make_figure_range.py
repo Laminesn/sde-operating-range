@@ -81,14 +81,14 @@ ax.text(0.9255, 0.055, "their earliest\nreported checkpoint", fontsize=7,
 ax.set_xlabel("train accuracy")
 ax.set_ylabel("SDE accuracy")
 ax.set_xlim(0.40, 1.005)
-ax.set_ylim(0.0, 1.05)
+ax.set_ylim(0.0, 1.12 if SINGLE else 1.05)
 ax.legend(fontsize=7.5, loc="lower left", framealpha=0.9, borderpad=0.4)
 ax.set_title("" if SINGLE else "a. against memorisation of $D_r$", fontsize=9, loc="left")
 
 if ax2 is None:
     # inset over the regime the whole result lives in
     fig.tight_layout()
-    axi = ax.inset_axes([0.10, 0.56, 0.32, 0.40])
+    axi = ax.inset_axes([0.10, 0.575, 0.32, 0.325])
     for (R, s_), rs in runs.items():
         axi.plot([r["train_acc"] for r in rs], [r["accuracy"] for r in rs],
                  color="0.72", lw=0.7, alpha=0.8)
